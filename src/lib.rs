@@ -11,13 +11,27 @@ pub trait Contract {
     fn upgrade(&self) {}
 
     #[endpoint]
-    fn calls_then_back_transfers(&self, to: ManagedAddress, egld_values: MultiValueEncoded<BigUint>) -> BigUint {
-        for egld_value in egld_values {
-            self.self_proxy(to.clone())
-                .send_back_egld_value(egld_value.clone())
-                .execute_on_dest_context::<()>();
-        }
+    fn call_call_bt(&self, to: ManagedAddress, egld_value1: BigUint, egld_value2: BigUint) -> BigUint {
+        self.self_proxy(to.clone())
+            .send_back_egld_value(egld_value1)
+            .execute_on_dest_context::<()>();
+        self.self_proxy(to.clone())
+            .send_back_egld_value(egld_value2)
+            .execute_on_dest_context::<()>();
         self.blockchain().get_back_transfers().total_egld_amount
+    }
+
+    #[endpoint]
+    fn call_bt_call_bt(&self, to: ManagedAddress, egld_value1: BigUint, egld_value2: BigUint) -> MultiValue2<BigUint, BigUint> {
+        self.self_proxy(to.clone())
+            .send_back_egld_value(egld_value1)
+            .execute_on_dest_context::<()>();
+        let bt1 = self.blockchain().get_back_transfers().total_egld_amount;
+        self.self_proxy(to.clone())
+            .send_back_egld_value(egld_value2)
+            .execute_on_dest_context::<()>();
+        let bt2 = self.blockchain().get_back_transfers().total_egld_amount;
+        (bt1, bt2).into()
     }
 
     #[endpoint]
