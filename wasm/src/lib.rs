@@ -6,9 +6,9 @@
 
 // Init:                                 1
 // Upgrade:                              1
-// Endpoints:                            3
+// Endpoints:                            5
 // Async Callback (empty):               1
-// Total number of exported functions:   6
+// Total number of exported functions:   8
 
 #![no_std]
 
@@ -22,7 +22,9 @@ multiversx_sc_wasm_adapter::endpoints! {
         upgrade => upgrade
         call_call_bt => call_call_bt
         call_bt_call_bt => call_bt_call_bt
-        send_back_egld_value => send_back_egld_value
+        call_send_back_async_v1 => call_send_back_async_v1
+        call_send_back_async_v2 => call_send_back_async_v2
+        send_back => send_back
     )
 }
 
